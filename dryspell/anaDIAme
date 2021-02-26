@@ -1,0 +1,101 @@
+#!/bin/bash
+#===========================================================================#
+#=									   =#
+#   Filename:	    anaDIAme
+#   Version:	    1.0
+#=									   =#
+#   Description:    digital image analysis for turfgrass using ImageJ
+#		    > useage: anaDIAme <bermuda | kikuyu> <Dry-down | Metabolites>
+#		    > Variables
+#			- percent coverage
+#			- percent green*
+#			- DGCI*
+#			- density*
+#
+#=  Author:	    0cb - Christian Bowman				   =#
+#   Creation:	    2019-08-20 10:43
+#   Updated:	    2020-07-28 19:23
+#=									   =#
+#===========================================================================#
+# inotify for automated changes in dirs
+# mogrify -resize 50% *.JPG if size>3mb https://askubuntu.com/questions/1164/how-to-easily-resize-images-via-command-line
+
+#--------------- vars ---------------#
+
+GRASS=$1
+STUDY=$2
+IMAGEJ=$HOME/programs/Fiji.app/ImageJ-linux64
+#IJM=/home/cb/Bioinf0cb/projects/fieldDIA
+IJM=/home/cb/bioprogs/projects/fieldDIA
+LABDIR=$HOME/Baird_Lab
+#PCOV="/home/cb/Bioinf0cb/projects/fieldDIA/percent_coverage-DIA2.ijm"
+#PCOV="/home/cb/bioprogs/projects/fieldDIA/percent_coverage-DIA.ijm"
+PCOV="/home/cb/bioprogs/projects/fieldDIA/percent_coverage-DIA2.ijm"
+
+#--------------- ImageJ macros ---------------#
+
+cd $LABDIR/$GRASS/$STUDY/DIA
+
+#$IMAGEJ --ij2 --headless --run $PCOV 'input="/home/cb/Baird_Lab/bermuda/Dry-down/Ratings2",output="/home/cb/Baird_Lab/bermuda/Dry-Down/Ratings2",suffix=".JPG"'
+
+#commentblock
+# S-v > :s/^/#
+
+for dir in *;
+#for dir in $LABDIR/$INPUT/Dry-down/Ratings2/;
+do
+    echo $dir
+    
+# __(2019-08-20 11:56)__ c[1] doesn't append the /Masks 
+#    IJV='"'"input='"''"${c[0]}"''"',output='"''"${c[$1]}/Masks"''"',suffix=".JPG""'"'
+#    IJV="'"'input="'""''"${c[0]}"''""'",output="'""''"${c[$1]}/Masks"''""'",suffix="'.JPG'"'"'"
+    IJV="'"'input="'""''"${dir}"''""'",output="'""''"${dir}/Masks"''""'",suffix="'.JPG'"'"'"
+
+    if [ -d "${dir}" ];
+    then
+	
+	cd $dir
+
+	#c[0]=$dir
+	#c[1]=$dir/Masks
+	
+#	echo $dir
+	echo ${dir}
+#	echo $IJV
+	echo ${IJV}
+#	echo $IJV2
+
+	# __(2019-08-20 10:43)__ percent coverage
+	# imagej --ij2 --headless --run script 'input="dir1",output="dir1/Masks"'
+
+	#$IMAGEJ --ij2 --headless --run $PCOV $(echo $IJV)
+	echo "$IMAGEJ --ij2 --headless --run $PCOV ${IJV}" > $LABDIR/$GRASS/$STUDY/DIA/tmp.sh
+	chmod 777 $LABDIR/$GRASS/$STUDY/DIA/tmp.sh
+	cd $LABDIR/$GRASS/$STUDY/DIA && ./tmp.sh
+
+	cd $dir/Masks
+	for file in *.JPG;
+	do
+	    mv -- "$file" "${file%.JPG}.csv"
+	done
+
+	for meas in *.csv;
+	do
+	    awk 'FNR==2 {print $7}' $meas >> "$LABDIR/$GRASS/$STUDY/DIA/$dir-meas.csv"
+	done
+	
+	cd $LABDIR/$GRASS/$STUDY/DIA
+
+    fi
+
+	# __(2019-08-20 10:43)__ percent green*
+	
+	
+	# __(2019-08-20 10:47)__ DGCI*
+	
+	
+	# __(2019-08-20 10:47)__ density*
+	
+    #fi
+done
+

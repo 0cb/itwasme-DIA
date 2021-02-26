@@ -1,0 +1,95 @@
+#!/bin/bash
+#===========================================================================#
+#=									   =#
+#   Filename:	    sanaDIAme
+#   Version:	    1.0
+#=									   =#
+#   Description:    digital image analysis for turfgrass using ImageJ
+#		    > useage: anaDIAme <bermuda | kikuyu>
+#		    currently hits current dir in Ratings2
+#		    > Variables
+#			- percent coverage
+#			- percent green*
+#			- DGCI*
+#			- density*
+#
+#=  Author:	    0cb - Christian Bowman				   =#
+#   Creation:	    2019-08-20 10:43
+#   Updated:	    2020-07-28 19:18
+#=									   =#
+#===========================================================================#
+
+
+#--------------- vars ---------------#
+
+INPUT=$1
+#STUDY=$2
+IMAGEJ=$HOME/programs/Fiji.app/ImageJ-linux64
+#IJM=/home/cb/Bioinf0cb/projects/fieldDIA
+IJM=/home/cb/bioprogs/projects/fieldDIA
+LABDIR=$HOME/Baird_Lab
+#PCOV="/home/cb/Bioinf0cb/projects/fieldDIA/percent_coverage-DIA2.ijm"
+PCOV="/home/cb/bioprogs/projects/fieldDIA/percent_coverage-DIA2.ijm"
+
+#--------------- ImageJ macros ---------------#
+
+#cd $LABDIR/$INPUT/Dry-down/Ratings2
+
+#$IMAGEJ --ij2 --headless --run $PCOV 'input="/home/cb/Baird_Lab/bermuda/Dry-down/Ratings2",output="/home/cb/Baird_Lab/bermuda/Dry-Down/Ratings2",suffix=".JPG"'
+
+    echo $PWD
+    THEN=${PWD##*/}  #gives current dir without full path
+    #NOW=$PWD
+
+    IJV="'"'input="'""''"${PWD}"''""'",output="'""''"${PWD}/Masks"''""'",suffix="'.JPG'"'"'"
+
+#	echo $dir
+	echo ${PWD}
+#	echo $IJV
+	echo ${IJV}
+#	echo $IJV2
+
+	# __(2019-08-20 10:43)__ percent coverage
+	# imagej --ij2 --headless --run script 'input="dir1",output="dir1/Masks"'
+
+	#$IMAGEJ --ij2 --headless --run $PCOV $(echo $IJV)
+	echo "$IMAGEJ --ij2 --headless --run $PCOV ${IJV}" > $LABDIR/$INPUT/Dry-down/Ratings/tmp.sh
+	chmod 777 $LABDIR/$INPUT/Dry-down/Ratings/tmp.sh
+	cd $LABDIR/$INPUT/Dry-down/Ratings && ./tmp.sh
+	
+	# __(2019-08-23 13:41)__ cd back to $dir (images dir) then to newly created Masks to clean up file extensions and measurements
+	# change .JPG to .csv extension
+	if [ "$INPUT" = "bermuda" ]
+	then
+	    cd $LABDIR/$INPUT/Dry-down/DIA
+	    RATDIR="DIA"
+
+	elif [ "$INPUT" = "kikuyu" ]
+	then
+	    cd $LABDIR/$INPUT/Dry-down/DIA
+	    RATDIR="DIA"
+
+	fi
+
+	cd $THEN/Masks
+	for file in *.JPG;
+	do
+	    mv -- "$file" "${file%.JPG}.csv"
+	done
+
+	# take [,6] values (%coverage) of each file and append to date's measurements
+	for meas in *.csv;
+	do
+	    awk 'FNR==2 {print $6}' $meas >> "$LABDIR/$INPUT/Dry-down/$RATDIR/$THEN-meas.csv"
+	done
+
+
+	# __(2019-08-20 10:43)__ percent green*
+	
+	
+	# __(2019-08-20 10:47)__ DGCI*
+	
+	
+	# __(2019-08-20 10:47)__ density*
+	
+

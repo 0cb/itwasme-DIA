@@ -1,0 +1,28 @@
+#!/bin/bash
+#===========================================================================#
+#=									   =#
+#   Filename:	    reRATme
+#   Version:	    1.0
+#=									   =#
+#   Description:    simple renaming script for long file names containing spaces
+#
+#=  Author:	    0cb - Christian Bowman				   =#
+#   Creation:	    2019-08-23 16:39
+#   Updated:	    
+#=									   =#
+#===========================================================================#
+
+for file in *.csv;
+do
+    
+    # __(2019-08-23 16:39)__ have to include space before the second /
+    # command reads as {string/substring/substitution} where substring is first instance
+    mv "$file" "${file/UCR Dry-down Bermuda 2019 /bermDD_digrat_}"
+done
+
+for nfile in *.csv;
+do
+    
+    # __(2019-08-23 16:39)__ second command to remove the extra space and time var
+    mv "$nfile" "${nfile/ *.csv/.csv}"
+done

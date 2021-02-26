@@ -1,0 +1,60 @@
+#!/bin/bash
+#===========================================================================#
+#=									   =#
+#   Filename:	    reDIAme
+#   Version:	    1.0
+#=									   =#
+#   Description:    rename images taken by lightbox camera
+#		    use: reDIAme <bermuda | kikuyu>
+#
+#=  Author:	    0cb - Christian Bowman				   =#
+#   Creation:	    2019-06-20 20:44
+#   Updated:	    2019-07-02 08:33
+#=									   =#
+#===========================================================================#
+
+INPUT=$1
+CWDIR=$(pwd)
+#MACRO=$HOME/programs/Fiji.app/macros/percent_coverage-DIA.ijm
+IMAGEJ=$HOME/programs/Fiji.app/ImageJ-linux64
+
+for dir in *;
+do
+    cd $CWDIR
+    echo $dir
+    if [ -d "${dir}" ];
+    then
+	cd $dir
+
+#__(2019-06-20 20:44)__ NOTE: for formatting in excel to keep leading zeros,
+# format cell > change from 'numbers' to 'text'
+	ls > ~/Baird_Lab/$INPUT/Dry-down/dia_history-$(date +%y_%m_%d).txt
+
+
+#__(2019-06-20 20:47)__ have to do twice if there's a folder split
+# '-v' just means verbose, then we APPEND the output to the log file
+
+# __(2020-07-30 18:42)__ in <date.dir> >> cd .. && cd <date>; reDIAme <grass>; rm IMG* >> repeat
+	for file in *;
+	do
+	    read line
+	    CRXN=$(stat -c '%y' $file | cut -d' ' -f1)
+# for file in *.png; do mv "$file" "${file/_h.png/_half.png}"; done 
+# where ${string/substring/substitution} – "substitute ﬁrst occurrence"
+	    mv -v "${file}" "${line}-$CRXN.JPG" >> ~/Baird_Lab/$INPUT/Dry-down/dia_history-$(date +%y_%m_%d).txt
+	done < ~/Baird_Lab/$INPUT/Dry-down/15D*_list.txt
+
+	mkdir -p ./Masks
+
+	rm IMG*
+	mogrify -resize 50% *.JPG
+    fi
+done
+
+# __(2019-06-30 17:43)__ try to run imagej macro from commandline
+# have to run the macro yourself until we figure out how to pass folders (in variable) to imagej
+# <holding | IMAGEJ --headless --console -macro $MACRO 'folder= ...>
+# give this https://forum.image.sc/t/running-plugins-macros-from-the-command-line/363 when you have time
+# $IMAGEJ doesn't launch for whatever reason...oh well
+
+#$IMAGEJ

@@ -1,0 +1,84 @@
+#!/bin/bash
+#===========================================================================#
+#=									   =#
+#   Filename:	    pptime.sh
+#   Version:	    1.0
+#=									   =#
+#   Description:    main script for PlotPlanningTime workflow
+#
+#=  Author:	    0cb - Christian Bowman				   =#
+#   Creation:	    2019-08-07 09:42
+#   Updated:	    2019-09-18 12:42
+#=									   =#
+#===========================================================================#
+
+mkdir -p temp
+
+PLAN=./temp/Plan_tmp.txt
+APLAN=./temp/altPlan_tmp.txt
+
+#if [ ! -f "$PLAN" ] || [ ! -f "$APLAN" ]; then	
+if [ ! -f "$PLAN" ]; then	
+	printf "\n"
+	printf "For the following, please enter your values separated by a <space> (ex. 2 2): \n"
+	read -p "Please enter the width and height of the space available: " side1 side2
+	read -p "Please enter the width and height of the desired plot size: " plot1 plot2
+	read -p "Please enter the alley sizes ( __ | ): " alley1 alley2
+	
+	printf "\n($side1 x $side2)ft area with ($plot1 x $plot2)ft plots inside and ($alley1, $alley2)ft alleys\n Is this correct? "
+	read -n 1 answer
+	
+	if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+
+	    Rscript ppPlan.R $side1 $side2 $plot1 $plot2 $alley1 $alley2
+	
+	else
+	    printf "\n"
+	    cd ~/Bioinf0cb/projects/fieldDIA
+	    ./$(basename $0) && exit
+	
+	fi
+
+else
+    printf "\nPlot plan(s) found"
+    printf "\nWould you like to use the available plot plan(s)?: "
+    read -n 1 answer
+
+    if [ "$answer" = "n" ] || [ "$answer" = "N" ]; then
+        printf "\n"
+        printf "\nRemoving available plans\n"
+	cd ~/Bioinf0cb/projects/fieldDIA
+	rm $PLAN $APLAN
+        ./$(basename $0) && exit
+	
+    elif [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+	if [ -f "$PLAN" ]; then
+	    
+	    if [ -f "$APLAN" ]; then
+		printf "\nAlternative plan found. Would you like to use the recommended parameters?: "
+		read -n 1 answer
+
+		if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+	        
+		    printf "\nholdalt\n"
+		    # altMeas_tmp.csv
+		    Rscript ppSkel.R ./temp/altMeas_tmp.csv
+
+		elif [ "$answer" = "n" ] || [ "$answer" = "N" ]; then
+
+		    printf "\nhold\n"
+		    # Meas_tmp.csv
+		    Rscript ppSkel.R ./temp/Meas_tmp.csv
+
+		fi
+
+	    fi
+	
+	    if [ ! -f "$APLAN" ]; then
+
+		Rscript ppSkel.R ./temp/Meas_tmp.csv
+	
+	    fi
+	fi
+    fi
+fi
