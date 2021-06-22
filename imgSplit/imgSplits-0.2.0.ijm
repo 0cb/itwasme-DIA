@@ -1,28 +1,39 @@
-/*
-#===========================================================================#
-#=									   =#
-#   Filename:	    imgSplit2.ijm
-#   Version:	    1.0
-#=									   =#
-#   Description:    IJ/FIJI macro for spliting multiple images
-#
-#=  Author:	    0cb - Christian Bowman				   =#
-#   Creation:	    2020-12-21
-#   Updated:	    
-#=									   =#
-#===========================================================================#
+/* Image Split (imgSplit)
+
+    ImageJ macro used to split images into equal cells.
+    Image is divided by "n", where n=2 means 4 total cells
+
+    Filename:	imgSplits.ijm
+    Version:	0.2.0
+    
+    Author:	0cb - Christian Bowman
+    Creation:	2021-03-26
+    Updated:	2021-06-21 16:36
+    Project:	"itwasme_DIA"; Digital image analysis
+
+	Usage: Must be run through IJ GUI
+    1. Open ImageJ
+    2. Plugins > Macros > Edit...
+
+	(If single image)
+	** Please refer to "imgSplit" for single images
+    3a. Open image to split
+    4a. "Run" macro
+    5a. Screen will flash and separate images will be saved
+
+	(If multiple images)
+    3b. Do NOT open any images
+    4b. "Run" macro (WITHOUT any images open)
+    5b. Select image input/ output directories and what format the images are in
+    6b. After pressing "OK", the screen will flash as IJ processes the images
 */
 
-//#--------------- sauce ---------------#
-// Sauce: http://imagej.1557.x6.nabble.com/split-image-td5001409.html
-//	http://imagej.1557.x6.nabble.com/How-to-save-all-opened-images-td3686986.html
-//
 
-#@ File (label = "Input directory", style = "directory") input
-#@ File (label = "Output directory", style = "directory") output
-#@ String (label = "File suffix", value = ".JPG") suffix
+//#--------------- Batch function ---------------#
 
-//#--------------- batching ---------------#
+#@ File(label = "Input directory", style = "directory") input
+#@ File(label = "Output directory", style = "directory") output
+#@ String(label = "File suffix", value = ".JPG") suffix
 
 processFolder(input);
 
@@ -38,7 +49,7 @@ function processFolder(input) {
 	}
 }
 
-//#--------------- body ---------------#
+//#--------------- Split image cells ---------------#
 
 function processFile(input, output, file) {
     print("Processing: " + input + File.separator + file);
@@ -85,3 +96,11 @@ function processFile(input, output, file) {
 
 	run("Close All");
 }
+
+
+/*
+ * Sauce: 
+ * http://imagej.1557.x6.nabble.com/split-image-td5001409.html
+ * http://imagej.1557.x6.nabble.com/How-to-save-all-opened-images-td3686986.html
+ *
+ */
