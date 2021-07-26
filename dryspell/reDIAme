@@ -1,22 +1,33 @@
 #!/bin/bash
 #===========================================================================#
-#=									   =#
-#   Filename:	    reDIAme
-#   Version:	    1.0
-#=									   =#
-#   Description:    rename images taken by lightbox camera
-#		    use: reDIAme <bermuda | kikuyu>
+#   
+#   Re-name/size images for Digital Image Analysis for me
 #
-#=  Author:	    0cb - Christian Bowman				   =#
-#   Creation:	    2019-06-20 20:44
-#   Updated:	    2019-07-02 08:33
-#=									   =#
+#   Filename:	    reDIAme
+#   Version:	    1.0.0
+#
+#   Author:	    0cb - Christian Bowman
+#   Creation:	    2019-06-20
+#   Updated:	    2021-07-19 12:50
+#   Project:	    "itwasme-DIA"; Digital Image Analysis
+#
+#   Usage:	    reDIAme <project> <grass>
+#
+#--------------- Dependencies ---------------#
+#   mogrify(ImageMagick)
+#
 #===========================================================================#
 
-INPUT=$1
+#--------------- vars ---------------#
+
 CWDIR=$(pwd)
+LABDIR=$HOME/Lab_Baird/projects
 #MACRO=$HOME/programs/Fiji.app/macros/percent_coverage-DIA.ijm
 IMAGEJ=$HOME/programs/Fiji.app/ImageJ-linux64
+STUDY=$1
+GRASS=$2
+
+#--------------- body ---------------#
 
 for dir in *;
 do
@@ -28,7 +39,8 @@ do
 
 #__(2019-06-20 20:44)__ NOTE: for formatting in excel to keep leading zeros,
 # format cell > change from 'numbers' to 'text'
-	ls > ~/Baird_Lab/$INPUT/Dry-down/dia_history-$(date +%y_%m_%d).txt
+	#ls > ~/Baird_Lab/$INPUT/Dry-down/dia_history-$(date +%y_%m_%d).txt
+	ls > $LABDIR/$STUDY/$GRASS/dia_history-$(date +%y_%m_%d).txt
 
 
 #__(2019-06-20 20:47)__ have to do twice if there's a folder split
@@ -41,8 +53,8 @@ do
 	    CRXN=$(stat -c '%y' $file | cut -d' ' -f1)
 # for file in *.png; do mv "$file" "${file/_h.png/_half.png}"; done 
 # where ${string/substring/substitution} – "substitute ﬁrst occurrence"
-	    mv -v "${file}" "${line}-$CRXN.JPG" >> ~/Baird_Lab/$INPUT/Dry-down/dia_history-$(date +%y_%m_%d).txt
-	done < ~/Baird_Lab/$INPUT/Dry-down/15D*_list.txt
+	    mv -v "${file}" "${line}-$CRXN.JPG" >> $LABDIR/$STUDY/$GRASS/dia_history-$(date +%y_%m_%d).txt
+	done < $LABDIR/$STUDY/$GRASS/15D*_list.txt
 
 	mkdir -p ./Masks
 

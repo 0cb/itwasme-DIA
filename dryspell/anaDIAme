@@ -1,40 +1,55 @@
 #!/bin/bash
 #===========================================================================#
-#=									   =#
-#   Filename:	    anaDIAme
-#   Version:	    1.0
-#=									   =#
-#   Description:    digital image analysis for turfgrass using ImageJ
-#		    > useage: anaDIAme <bermuda | kikuyu> <Dry-down | Metabolites>
-#		    > Variables
-#			- percent coverage
-#			- percent green*
-#			- DGCI*
-#			- density*
+#   
+#   Analyze - Digital Image Analysis for me
 #
-#=  Author:	    0cb - Christian Bowman				   =#
-#   Creation:	    2019-08-20 10:43
-#   Updated:	    2020-07-28 19:23
-#=									   =#
+#   Workflow for applying an ImageJ macro for DIA of drydown images.
+#   Currently supports:
+#	- percent living (green) coverage)
+#
+#   Filename:	    anaDIAme
+#   Version:	    1.0.0
+#
+#   Author:	    0cb - Christian Bowman
+#   Creation:	    2019-08-20
+#   Updated:	    2021-07-19 12:34
+#   Project:	    "itwasme-DIA"; Digital Image Analysis
+#
+#   Usage:	    anaDIAme <project> <grass>
+#
+#--------------- Dependencies ---------------#
+#   ImageJ/ FIJI
+#
 #===========================================================================#
+
+#--------------- Changes ---------------#
+# modified  2021-07-19	directories referenced
+#
+#--------------- Issues ---------------#
+#
+#
+#--------------- Planned ---------------#
+#
+#
+
 # inotify for automated changes in dirs
 # mogrify -resize 50% *.JPG if size>3mb https://askubuntu.com/questions/1164/how-to-easily-resize-images-via-command-line
 
 #--------------- vars ---------------#
 
-GRASS=$1
-STUDY=$2
 IMAGEJ=$HOME/programs/Fiji.app/ImageJ-linux64
-#IJM=/home/cb/Bioinf0cb/projects/fieldDIA
-IJM=/home/cb/bioprogs/projects/fieldDIA
-LABDIR=$HOME/Baird_Lab
+#IJM=$HOME/gitrekt/itwasme-DIA/dryspell
+LABDIR=$HOME/Lab_Baird/projects
 #PCOV="/home/cb/Bioinf0cb/projects/fieldDIA/percent_coverage-DIA2.ijm"
 #PCOV="/home/cb/bioprogs/projects/fieldDIA/percent_coverage-DIA.ijm"
-PCOV="/home/cb/bioprogs/projects/fieldDIA/percent_coverage-DIA2.ijm"
+PCOV="/home/cb/gitrekt/itwasme-DIA/dryspell/percent_coverage-DIA2.ijm"    #syntax requires full directory
+
+STUDY=$1
+GRASS=$2
 
 #--------------- ImageJ macros ---------------#
 
-cd $LABDIR/$GRASS/$STUDY/DIA
+cd $LABDIR/$STUDY/$GRASS/DIA
 
 #$IMAGEJ --ij2 --headless --run $PCOV 'input="/home/cb/Baird_Lab/bermuda/Dry-down/Ratings2",output="/home/cb/Baird_Lab/bermuda/Dry-Down/Ratings2",suffix=".JPG"'
 
@@ -70,8 +85,8 @@ do
 
 	#$IMAGEJ --ij2 --headless --run $PCOV $(echo $IJV)
 	echo "$IMAGEJ --ij2 --headless --run $PCOV ${IJV}" > $LABDIR/$GRASS/$STUDY/DIA/tmp.sh
-	chmod 777 $LABDIR/$GRASS/$STUDY/DIA/tmp.sh
-	cd $LABDIR/$GRASS/$STUDY/DIA && ./tmp.sh
+	chmod 777 $LABDIR/$STUDY/$GRASS/DIA/tmp.sh
+	cd $LABDIR/$STUDY/$GRASS/DIA && ./tmp.sh
 
 	cd $dir/Masks
 	for file in *.JPG;
@@ -81,10 +96,10 @@ do
 
 	for meas in *.csv;
 	do
-	    awk 'FNR==2 {print $7}' $meas >> "$LABDIR/$GRASS/$STUDY/DIA/$dir-meas.csv"
+	    awk 'FNR==2 {print $7}' $meas >> "$LABDIR/$STUDY/$GRASS/DIA/$dir-meas.csv"
 	done
 	
-	cd $LABDIR/$GRASS/$STUDY/DIA
+	cd $LABDIR/$STUDY/$GRASS/DIA
 
     fi
 
