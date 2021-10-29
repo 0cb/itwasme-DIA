@@ -37,6 +37,7 @@
 
 #--------------- vars ---------------#
 
+CWDIR=$(pwd)
 IMAGEJ=$HOME/programs/Fiji.app/ImageJ-linux64
 #IJM=$HOME/gitrekt/itwasme-DIA/dryspell
 LABDIR=$HOME/Lab_Baird/projects
@@ -49,7 +50,8 @@ GRASS=$2
 
 #--------------- ImageJ macros ---------------#
 
-cd $LABDIR/$STUDY/$GRASS/DIA
+#cd $LABDIR/$STUDY/$GRASS/DIA
+echo $CWDIR
 
 #$IMAGEJ --ij2 --headless --run $PCOV 'input="/home/cb/Baird_Lab/bermuda/Dry-down/Ratings2",output="/home/cb/Baird_Lab/bermuda/Dry-Down/Ratings2",suffix=".JPG"'
 
@@ -84,7 +86,7 @@ do
 	# imagej --ij2 --headless --run script 'input="dir1",output="dir1/Masks"'
 
 	#$IMAGEJ --ij2 --headless --run $PCOV $(echo $IJV)
-	echo "$IMAGEJ --ij2 --headless --run $PCOV ${IJV}" > $LABDIR/$GRASS/$STUDY/DIA/tmp.sh
+	echo "$IMAGEJ --ij2 --headless --run $PCOV ${IJV}" > $LABDIR/$STUDY/$GRASS/DIA/tmp.sh
 	chmod 777 $LABDIR/$STUDY/$GRASS/DIA/tmp.sh
 	cd $LABDIR/$STUDY/$GRASS/DIA && ./tmp.sh
 
@@ -94,9 +96,11 @@ do
 	    mv -- "$file" "${file%.JPG}.csv"
 	done
 
+	rm 15D*Start*.csv
+
 	for meas in *.csv;
 	do
-	    awk 'FNR==2 {print $7}' $meas >> "$LABDIR/$STUDY/$GRASS/DIA/$dir-meas.csv"
+	    awk 'FNR==2 {print $6}' $meas >> "$LABDIR/$STUDY/$GRASS/DIA/$dir-meas.csv"
 	done
 	
 	cd $LABDIR/$STUDY/$GRASS/DIA
@@ -113,4 +117,12 @@ do
 	
     #fi
 done
+
+touch dia_full-$(date +%y_%m_%d).csv
+
+for days in *-meas.csv;
+do
+    cat $days >> dia_full-$(date +%y_%m_%d).csv
+done
+    
 

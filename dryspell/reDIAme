@@ -12,6 +12,10 @@
 #   Project:	    "itwasme-DIA"; Digital Image Analysis
 #
 #   Usage:	    reDIAme <project> <grass>
+#   
+#   **IMPORTANT NOTE**
+#   Backup images prior to using reDIAme!
+#   The script removes the original images to save space
 #
 #--------------- Dependencies ---------------#
 #   mogrify(ImageMagick)
