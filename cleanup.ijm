@@ -8,6 +8,10 @@ function cleanUp() {
          selectWindow("Results"); 
          run("Close");
     }
+    if (isOpen("Raw Results")) {
+         selectWindow("Raw Results"); 
+         run("Close");
+    }
     if (isOpen("Log")) {
          selectWindow("Log");
          run("Close");
