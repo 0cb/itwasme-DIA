@@ -25,17 +25,17 @@ setwd("~/Insync/cbowm002@ucr.edu/Google Drive/workspace-sync/mules_testing/docs"
 
 # What is MuLES?
 
-```MuLES``` (Multiple Leaf Shape Extraction System) is a workflow based in ImageJ [cite] for quickly analyzing traditional morphometric parameters of leaf samples. The workflow combines the usage of several plugins [cite] to identify and measure different parameters relevant to object shape, such as object length, width, area, and aspect ratio. These measurements can be taken using raw images and require no initial pre-processing steps* (eg. thresholding).
+```MuLES``` (Multiple Leaf Shape Extraction System) is a workflow based in ImageJ [cite] for quickly analyzing traditional morphometric parameters of leaf samples. The workflow combines the usage of ImageJ plugins, such as ```Morphology``` [cite] and ```BioVoxxel toolbox``` [cite], to identify and measure different parameters relevant to object shape, such as object length, width, area, and aspect ratio. These measurements can be taken using raw images and require no initial pre-processing steps* (eg. thresholding).
 
 A summary of the capabilities of ```MuLES``` is as follows:
 
 * User-friendly workflow that features a graphical user interface (GUI) and does not require prior coding knowledge.
 * Automated batch processing of multiple images containing one or several leaves per image, allowing for high-throughput measuring of large populations.
 * Orientation-agnostic processing that can identify individual leaves in close proximity.
-* Additional options for controlling how the results are output, allowing for users to incorporate the output from ```MuLES``` into other image analysis softwares (eg. MOMOCS).
+* Additional options for controlling how the results are output, allowing for users to incorporate the output from ```MuLES``` into other image analysis softwares (eg. Momocs [cite]).
 
 # ImageJ/ Fiji installation
-To use ```MuLES```, it is recommended that users install Fiji [cite], a pre-packaged distribution of the image analysis software ImageJ [cite]. This distribution comes pre-packaged with multiple plugins for use in scientific image analysis.
+To use ```MuLES```, it is recommended that users install Fiji [cite], a pre-packaged distribution of the image analysis software ImageJ [cite]. This distribution comes pre-packaged with multiple plugins for use in scientific image analysis and can be downloaded and installed from [https://imagej.net/software/fiji/downloads](https://imagej.net/software/fiji/downloads). 
 
 Additionally, ```MuLES``` requires two dependencies that can be installed through the Fiji interface.
 
@@ -49,7 +49,7 @@ Additionally, ```MuLES``` requires two dependencies that can be installed throug
 
 
 ## Installing MuLES
-```MuLES``` can be downloaded via the [Github repository](https://github.com/0cb/itwasme-DIA/mules). The download location for the MuLES.ijm file can be wherever users want, as long as it is easily accessible.
+```MuLES``` can be downloaded via the [Github repository](https://github.com/0cb/mules). The download location for the MuLES.ijm file can be wherever users want, as long as it is easily accessible.
 
 ## Setting up the working directory
 The ```MuLES``` workflow requires user-specification for the initial "input" and "output" directories.
@@ -58,9 +58,9 @@ The ```MuLES``` workflow requires user-specification for the initial "input" and
 
 
 # Image Inputs
-```MuLES``` can be run with almost any image format as long as it is specified. This was done to allow for batch processing of folders containing other files in addition to the desired input image files.
+```MuLES``` can be run with almost any image format as long as it is specified in the initial GUI (case-sensitive). This was done to allow for batch processing of large folders that may contain other file types.
 
-Images may contain one or several leaves, and leaves may be oriented in any way that is convenient. Typically, it is recommended that images contain some sort of identifier (such as accession number) to help users better organize their input files. Inputs should also be in color, rather than black & white or binary formats, but do not require a color reference card for leaf recognition. An example is included below.
+Images may contain one or several leaves, and leaves may be oriented in any way that is convenient. Typically, it is recommended that images contain some sort of identifier (such as accession number) to help users better organize their input files. Input images should also be in color, rather than black & white or binary formats. It should be noted that a color reference card is not required here for leaf recognition. An example is included below.
 
 ![](sample_data/sample_no1.jpg){width=50%}
 \newpage
@@ -79,9 +79,9 @@ Images may contain one or several leaves, and leaves may be oriented in any way 
 \newpage
 # Running MuLES
 
-When running ```MuLES``` it is important that there are no images or projects open in the ImageJ/ Fiji software.
+When running ```MuLES```, no images or projects should be open in the ImageJ/ Fiji software.
 
-To run ```MuLES```, navigate the Fiji interface to the macro interface.
+To run ```MuLES```, navigate the Fiji toolbar to the macro interface.
 
 > Plugins \> Macros \> Edit...
 
@@ -99,21 +99,22 @@ The user prompt for ```MuLES``` settings includes:
 
 * input/ output folders
 * input/ output formats
-* **single or multiple leaves per image**
 * type of output desired
   + **Measurements only** - measurements are printed to a .csv file
   + **Masks only** - individual images are saved to the specified output format for later use (eg. visual filtering, other analysis softwares, etc.)
-  + **Both** - measurements and images are saved to the specified output directory
+  + **Both** - measurements are printed to a .csv file and images are saved to the specified output format
 
 For additional settings:
 
 * **Colored Feret's diameter & breadth lines** - adds visual representations of the length and width as measured by ```MuLES``` (see 'MuLES output' for examples)
-* **Small leaves** - reduces the stringency of ```MuLES``` when identifying leaves 
+* **Small leaves in image** - reduces the stringency of ```MuLES``` when identifying leaves 
   + **NOTE** background noise/ objects may be falsely identified as a result
-* **Black leaves on white background** - if "yes" is selected, output images will be black & white rather than white & black
+* **Output black leaves on white background** - if "yes" is selected, output images will be black & white rather than white & black
   + for use in MOMOCS (see 'MuLES output' for examples)
-* **Detailed measurements** - if "yes" is selected, the full output of measurements from ```MuLES``` will be printed to an additional .csv file
-  + The full output includes measurements that are not necessarily associated with morphometric parameters, but may be useful for more detailed analyses pertaining to ___ moprhometrics; a full list of the output measurements and their meanings can be found at ## MuLES output.
+* **Filtering based on LAR standard devitaion** - if "yes" is selected, then the standard deviation for leaf aspect ratio will be calculated for all detected leaves in each image and used as a metric for detecting background noise or outliers
+  + if "Masks only" or "Both" are selected as desired output types, then leaf objects that fall outside of the standard deviation filter will have the "-outlier" string appended to the end of the file name
+* **Cutoff for standard deviation filtering** - maximum value for standard deviation of leaf aspect ratio, where values greater than the defined value are recommended for removal
+* **(Troubleshooting) Dark leaf on black background** - to be used when full leaf objects are not being detected due to insufficient lighting
 
 After the correct settings are chosen, click "OK" to begin processing the chosen input folder. Each image in the folder will flash on the screen as they are processed and do not require any further user input.
 
@@ -129,7 +130,7 @@ When selecting **"Masks only"** or **"Both"**, the resulting output images are s
 
 When selecting **"Measurements only"** or **"Both"**, the resulting measurements are output to a .csv file.
 
-The default data table contains the following measurements:
+The data table contains the following measurements:
 
 * Area - the Area of the region as defined by the boundary pixels
 * Feret - length of the largest axis
@@ -148,10 +149,3 @@ The default data table contains the following measurements:
 * PrLen2 - length of the perpendicular line originating from the second Breadth point
 
 
-When choosing the **"Detailed measurements file"** option, all the default measurements as well as additional measurements are output to a different .csv file. Many of these measurements come from the "Particles8" plugin found in the ```Morphology``` package included in the ```MuLES``` workflow and can be referenced at the original website (test)[test]. A description of relevant measurements are also included below for reference:
-
-* Perim - the Perimeter of the region as defined by the boundary pixels
-* Circ - 
-* Roundness - 
-* Concavity -
-* Convexity -
